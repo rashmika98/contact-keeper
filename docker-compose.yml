@@ -1,0 +1,37 @@
+version: '3'
+services:
+    mongo:
+        image: 'mongo:latest'
+        restart: always
+        container_name: mongo
+        ports:
+            - '27017:27017'
+        volumes:
+            - './mongo/data:/data/db'
+        networks:
+            - contact-keeper
+    contact-keeper-backend:
+        # container_name: backend
+        restart: always
+        build:
+            context: ./contact-keeper-backend
+            dockerfile: Dockerfile
+        ports:
+            - '5000:5000'
+        depends_on:
+            - mongo
+        networks:
+            - contact-keeper
+
+    contact-keeper-frontend:
+        restart: always
+        build:
+            context: ./contact-keeper-frontend
+            dockerfile: Dockerfile
+        ports:
+            - '3000:3000'
+        networks:
+            - contact-keeper
+networks:
+        contact-keeper:
+            driver: bridge
